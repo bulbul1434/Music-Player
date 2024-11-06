@@ -54,15 +54,6 @@ body {
     justify-content: space-between;
 }
 
-/* .top-bar i {
-    font-size: 30px;
-    color: var(--midnight-blue);
-    text-shadow: 0 0 10px rgb(162, 202, 239),
-        0 0 20px rgb(162, 202, 239),
-        0 0 40px rgb(162, 202, 239),
-        0 0 80px rgb(162, 202, 239);
-} */
-
 
 .logo {
     width: 20px;
@@ -94,6 +85,7 @@ input[type="text"] {
     align-items: center;
     justify-content: center;
     background-color: transparent;
+    color: var(--snow-white);
     padding: 5px;
     font-size: 10px;
     border: 1px solid #ccc;
@@ -103,14 +95,18 @@ input[type="text"] {
     margin-bottom: 20px;
 }
 
-/* input[type="text"]::after{
-    background-color: transparent;
-} */
+input::placeholder {
+    color:var(--snow-white); 
+    opacity: 1; 
+    font-size: 9px;
+}
+
 button {
     position: absolute;
     right: 13em;
     top: 8%;
     transform: translateY(-50%);
+    color:var(--snow-white); 
     width: 30px;
     height: 30px;
     border: none;

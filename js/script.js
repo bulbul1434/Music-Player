@@ -22,6 +22,9 @@ window.addEventListener("load", () => {
   updatePlayingSong();
 });
 
+
+
+
 // Hide all existing li elements within ul
 function hideMusicList() {
   const allLiTags = ulTag.querySelectorAll("li");
@@ -233,12 +236,16 @@ function updatePlayingSong() {
 
 
 
+
+
+
+
+
+
+
 let currentSong = null;
 let currentIndex = 0;
 const resultsDiv = document.getElementById('results');
-// const playPauseBtn = document.getElementById('playPause');
-// const prevBtn = document.getElementById('prev');
-// const nextBtn = document.getElementById('next');
 
 async function searchSong() {
   const songName = document.getElementById('songInput').value;
@@ -265,25 +272,21 @@ async function searchSong() {
   data.tracks.items.forEach((track, index) => {
     const trackElement = document.createElement('div');
     trackElement.innerHTML = `
-                <p class="song-title" id="title-${track.id}"><strong>${track.name}</strong></p>                    
-                <p> ${track.artists.map(artist => artist.name).join(', ')}</p>
-                ${track.preview_url ? `<audio id="audio-${track.id}">
-                    <source src="${track.preview_url}" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>` : '<p>No preview available</p>'} 
-                
-                <article class="song-controls">
-                    <i class="material-icons prev" data-index="${index}">skip_previous</i>
-                    <i class="material-icons play" data-index="${index}">play_arrow</i>
-                    <i class="material-icons next" data-index="${index}">skip_next</i>
-                    <i class="material-icons like" id="heart" data-index="${index}">favorite_border</i>
-                </article>
-
-            `;
+      <div class="song-item" data-index="${index}">
+        <p class="song-title" id="title-${track.id}"><strong>${track.name}</strong></p>
+        <span class="song-duration" id="duration-${track.id}"></span>
+      </div>
+      ${track.preview_url ? `<audio id="audio-${track.id}">
+          <source src="${track.preview_url}" type="audio/mpeg">
+          Your browser does not support the audio element.
+      </audio>` : '<p>No preview available</p>'}
+    `;
     resultsDiv.appendChild(trackElement);
 
     const audioElement = trackElement.querySelector('audio');
+    const songTitle = trackElement.querySelector(`#title-${track.id}`);
     const durationSpan = trackElement.querySelector(`#duration-${track.id}`);
+
     if (audioElement) {
       audioElement.addEventListener('loadedmetadata', () => {
         const minutes = Math.floor(audioElement.duration / 60);
@@ -291,119 +294,33 @@ async function searchSong() {
         durationSpan.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
       });
 
-      const playButton = trackElement.querySelector('.play');
-      const prevButton = trackElement.querySelector('.prev');
-      const nextButton = trackElement.querySelector('.next');
-      const likeButton = trackElement.querySelector('.like');
-
-      playButton.addEventListener('click', () => {
+      songTitle.addEventListener('click', () => {
         if (currentSong && currentSong !== audioElement) {
           currentSong.pause();
           document.querySelector(`#title-${currentSong.id.split('-')[1]}`).classList.remove('playing');
-          document.querySelector('.play[data-index="' + currentIndex + '"]').innerHTML = 'play_arrow';
         }
         currentSong = audioElement;
         currentIndex = index;
         if (audioElement.paused) {
           audioElement.play();
-          playButton.innerHTML = 'pause';
         } else {
           audioElement.pause();
-          playButton.innerHTML = 'play_arrow';
         }
-        document.querySelector(`#title-${track.id}`).classList.add('playing');
-      });
-
-      likeButton.addEventListener('click', () => {
-        if (likeButton.innerHTML === 'favorite_border') {
-          likeButton.innerHTML = 'favorite';
-          likeButton.style.color = 'red';
-        } else {
-          likeButton.innerHTML = 'favorite_border';
-          likeButton.style.color = 'black';
-        }
-      });
-
-      prevButton.addEventListener('click', () => {
-        if (index > 0) {
-          const prevTrack = resultsDiv.querySelectorAll('audio')[index - 1];
-          if (prevTrack) {
-            if (currentSong) currentSong.pause();
-            currentSong = prevTrack;
-            currentSong.play();
-            document.querySelector('.play[data-index="' + (index - 1) + '"]').innerHTML = 'pause';
-            document.querySelector('.play[data-index="' + index + '"]').innerHTML = 'play_arrow';
-          }
-        }
-      });
-
-      nextButton.addEventListener('click', () => {
-        if (index < resultsDiv.querySelectorAll('audio').length - 1) {
-          const nextTrack = resultsDiv.querySelectorAll('audio')[index + 1];
-          if (nextTrack) {
-            if (currentSong) currentSong.pause();
-            currentSong = nextTrack;
-            currentSong.play();
-            document.querySelector('.play[data-index="' + (index + 1) + '"]').innerHTML = 'pause';
-            document.querySelector('.play[data-index="' + index + '"]').innerHTML = 'play_arrow';
-          }
-        }
+        songTitle.classList.add('playing');
       });
     }
   });
 }
 
-playPauseBtn.addEventListener('click', () => {
-  if (currentSong) {
-    if (currentSong.paused) {
-      currentSong.play();
-      playPauseBtn.innerHTML = 'pause';
-    } else {
-      currentSong.pause();
-      playPauseBtn.innerHTML = 'play_arrow';
-    }
-  }
-});
-
-prevBtn.addEventListener('click', () => {
-  if (currentIndex > 0) {
-    currentIndex -= 1;
-    const prevTrack = resultsDiv.querySelectorAll('audio')[currentIndex];
-    if (prevTrack) {
-      if (currentSong) currentSong.pause();
-      currentSong = prevTrack;
-      currentSong.play();
-      playPauseBtn.innerHTML = 'pause';
-      document.querySelector('.play[data-index="' + currentIndex + '"]').innerHTML = 'pause';
-      document.querySelector('.play[data-index="' + (currentIndex + 1) + '"]').innerHTML = 'play_arrow';
-    }
-  }
-});
-
-nextBtn.addEventListener('click', () => {
-  if (currentIndex < resultsDiv.querySelectorAll('audio').length - 1) {
-    currentIndex += 1;
-    const nextTrack = resultsDiv.querySelectorAll('audio')[currentIndex];
-    if (nextTrack) {
-      if (currentSong) currentSong.pause();
-      currentSong = nextTrack;
-      currentSong.play();
-      playPauseBtn.innerHTML = 'pause';
-      document.querySelector('.play[data-index="' + currentIndex + '"]').innerHTML = 'pause';
-      document.querySelector('.play[data-index="' + (currentIndex - 1) + '"]').innerHTML = 'play_arrow';
-    }
-  }
-});
-
 const style = document.createElement('style');
 style.innerHTML = `
-        .playing  {
-            display: inline-block;
-            overflow: hidden;
-            box-sizing: border-box;
-                pointer-events: none;
-color: var(--electric-blue);
-        }
-    `;
+  .song-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .playing {
+    color: var(--electric-blue);
+  }
+`;
 document.head.appendChild(style);
-
