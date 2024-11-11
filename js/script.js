@@ -13,25 +13,15 @@ const wrapper = document.querySelector(".wrapper"),
   closeMoreMusic = musicList.querySelector("#close"),
   repeatBtn = wrapper.querySelector("#repeat-plist"),
   ulTag = wrapper.querySelector("ul");
-
-let musicIndex = Math.floor(Math.random() * allMusic.length);
-let isMusicPaused = true;
-
-window.addEventListener("load", () => {
-  loadMusic(musicIndex);
-  updatePlayingSong();
-});
-
-
-
-
-// Hide all existing li elements within ul
-function hideMusicList() {
-  const allLiTags = ulTag.querySelectorAll("li");
-  allLiTags.forEach(li => li.style.display = 'none');
-}
-
-
+  
+  let musicIndex = Math.floor(Math.random() * allMusic.length);
+  let isMusicPaused = true;
+  
+  window.addEventListener("load", () => {
+    loadMusic(musicIndex);
+    updatePlayingSong();
+  });
+  
 // Load music details
 function loadMusic(index) {
   const song = allMusic[index];
@@ -115,20 +105,20 @@ mainAudio.addEventListener("loadeddata", () => {
   const totalSec = Math.floor(mainAudio.duration % 60)
     .toString()
     .padStart(2, "0");
-  wrapper.querySelector(".max-duration").innerText = `${totalMin}:${totalSec}`;
-});
-
-// Seek through the progress bar
-progressArea.addEventListener("click", (e) => {
-  const progressWidth = progressArea.clientWidth;
-  const clickedOffsetX = e.offsetX;
-  mainAudio.currentTime = (clickedOffsetX / progressWidth) * mainAudio.duration;
-  playMusic();
-  updatePlayingSong();
-});
-
-// Repeat/shuffle button event
-repeatBtn.addEventListener("click", () => {
+    wrapper.querySelector(".max-duration").innerText = `${totalMin}:${totalSec}`;
+  });
+  
+  // Seek through the progress bar
+  progressArea.addEventListener("click", (e) => {
+    const progressWidth = progressArea.clientWidth;
+    const clickedOffsetX = e.offsetX;
+    mainAudio.currentTime = (clickedOffsetX / progressWidth) * mainAudio.duration;
+    playMusic();
+    updatePlayingSong();
+  });
+  
+  // Repeat/shuffle button event
+  repeatBtn.addEventListener("click", () => {
   switch (repeatBtn.innerText) {
     case "repeat":
       repeatBtn.innerText = "repeat_one";
@@ -173,6 +163,7 @@ function shuffleMusic() {
   updatePlayingSong();
 }
 
+
 // Show/hide music list
 moreMusicBtn.addEventListener("click", () => {
   musicList.classList.toggle("show");
@@ -182,17 +173,18 @@ closeMoreMusic.addEventListener("click", () => {
   musicList.classList.remove("show");
 });
 
+
 // Generate song list dynamically
 allMusic.forEach((song, index) => {
   const liTag = `
-    <li li-index="${index + 1}">
-      <div class="row">
+  <li li-index="${index + 1}">
+  <div class="row">
         <span>${song.name}</span>
         <p>${song.artist}</p>
       </div>
       <span id="${song.src}" class="audio-duration">3:40</span>
       <audio class="${song.src}" src="songs/${song.src}.mp3"></audio>
-    </li> `;
+      </li> `;
   ulTag.insertAdjacentHTML("beforeend", liTag);
 
   const liAudioTag = ulTag.querySelector(`.${song.src}`);
@@ -202,41 +194,71 @@ allMusic.forEach((song, index) => {
     const totalSec = Math.floor(duration % 60)
       .toString()
       .padStart(2, "0");
-    const durationTag = ulTag.querySelector(`#${song.src}`);
-    durationTag.innerText = `${totalMin}:${totalSec}`;
-    durationTag.setAttribute("t-duration", `${totalMin}:${totalSec}`);
+      const durationTag = ulTag.querySelector(`#${song.src}`);
+      durationTag.innerText = `${totalMin}:${totalSec}`;
+      durationTag.setAttribute("t-duration", `${totalMin}:${totalSec}`);
+    });
+    
+    // Add click event listener to each list item
+    const liItem = ulTag.querySelector(`li[li-index="${index + 1}"]`);
+    liItem.addEventListener("click", () => selectSong(liItem));
   });
-
-  // Add click event listener to each list item
-  const liItem = ulTag.querySelector(`li[li-index="${index + 1}"]`);
-  liItem.addEventListener("click", () => selectSong(liItem));
-});
-
-// Update the song that is currently playing in the list
-function updatePlayingSong() {
+  
+  // Update the song that is currently playing in the list
+  function updatePlayingSong() {
+    const allLiTags = ulTag.querySelectorAll("li");
+    
+    // Remove 'playing' class from all list items
+    allLiTags.forEach((li) => {
+      li.classList.remove("playing");
+      const audioTag = li.querySelector(".audio-duration");
+      const songDuration = audioTag.getAttribute("t-duration");
+      audioTag.innerText = songDuration; // Reset to original duration
+    });
+    
+    // Add 'playing' class to the current song
+    const currentLi = ulTag.querySelector(`li[li-index="${musicIndex + 1}"]`);
+    currentLi.classList.add("playing");
+    
+    // Update the duration text to "Playing"
+    const currentAudioTag = currentLi.querySelector(".audio-duration");
+    currentAudioTag.innerText = "Playing";
+  }
+  
+  closeButton =  document.getElementById('close');
+  
+  // Function to show the music list
+  function showMusicList() {
   const allLiTags = ulTag.querySelectorAll("li");
-
-  // Remove 'playing' class from all list items
-  allLiTags.forEach((li) => {
-    li.classList.remove("playing");
-    const audioTag = li.querySelector(".audio-duration");
-    const songDuration = audioTag.getAttribute("t-duration");
-    audioTag.innerText = songDuration; // Reset to original duration
+  allLiTags.forEach(li => li.style.display = 'block');
+  }
+  
+  function hideMusicList() {
+   const allLiTags = ulTag.querySelectorAll("li"); 
+   allLiTags.forEach(li => li.style.display = 'none'); 
+  }
+  
+  // Function to pause all songs
+  function pauseAllSongs() {
+  const allAudioElements = document.querySelectorAll('audio');
+  allAudioElements.forEach(audio => audio.pause());
+  const playingTitle = document.querySelector('.playing');
+  if (playingTitle) {
+    playingTitle.classList.remove('playing');
+  }
+  }
+  
+  // Close button event to act as back button
+  closeButton.addEventListener('click', () => {
+  if (resultsDiv.style.display === 'block') {
+    // If search results are displayed, hide them and show music list
+    resultsDiv.style.display = 'none';
+    pauseAllSongs();
+    showMusicList();
+  }else {
+    musicList.classList.remove("show"); 
+  }
   });
-
-  // Add 'playing' class to the current song
-  const currentLi = ulTag.querySelector(`li[li-index="${musicIndex + 1}"]`);
-  currentLi.classList.add("playing");
-
-  // Update the duration text to "Playing"
-  const currentAudioTag = currentLi.querySelector(".audio-duration");
-  currentAudioTag.innerText = "Playing";
-}
-
-
-
-
-
 
 
 
@@ -246,6 +268,7 @@ function updatePlayingSong() {
 let currentSong = null;
 let currentIndex = 0;
 const resultsDiv = document.getElementById('results');
+
 
 async function searchSong() {
   const songName = document.getElementById('songInput').value;
@@ -297,19 +320,53 @@ async function searchSong() {
       songTitle.addEventListener('click', () => {
         if (currentSong && currentSong !== audioElement) {
           currentSong.pause();
+          clearInterval(countdownInterval); // Stop the previous song's countdown
           document.querySelector(`#title-${currentSong.id.split('-')[1]}`).classList.remove('playing');
         }
         currentSong = audioElement;
         currentIndex = index;
         if (audioElement.paused) {
           audioElement.play();
+          startCountdown(audioElement.duration, durationSpan); // Start countdown from the song duration
         } else {
           audioElement.pause();
+          clearInterval(countdownInterval); // Stop countdown if paused
         }
         songTitle.classList.add('playing');
       });
+
+      // Update the countdown display as the song plays
+      audioElement.addEventListener('timeupdate', () => {
+        updateCountdown(audioElement.currentTime, audioElement.duration, durationSpan);
+      });
     }
   });
+}
+
+let countdownInterval;
+
+function startCountdown(duration, displayElement) {
+  let remainingTime = duration;
+
+  clearInterval(countdownInterval); // Clear any existing countdown
+  countdownInterval = setInterval(() => {
+    if (remainingTime <= 0) {
+      clearInterval(countdownInterval);
+      displayElement.innerText = '0:00';
+      return;
+    }
+    const minutes = Math.floor(remainingTime / 60);
+    const seconds = Math.floor(remainingTime % 60);
+    displayElement.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    remainingTime--;
+  }, 1000);
+}
+
+function updateCountdown(currentTime, duration, displayElement) {
+  const remainingTime = duration - currentTime;
+  const minutes = Math.floor(remainingTime / 60);
+  const seconds = Math.floor(remainingTime % 60);
+  displayElement.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
 
 const style = document.createElement('style');
@@ -324,3 +381,104 @@ style.innerHTML = `
   }
 `;
 document.head.appendChild(style);
+
+
+
+
+// // Back button event to return to music list and pause any playing song
+// backButton.addEventListener('click', () => {
+//   resultsDiv.style.display = 'none'; 
+//   pauseAllSongs(); // Pause any currently playing song
+//   showMusicList(); 
+// });
+
+// // Function to show the music list
+// function showMusicList() {
+//  const allLiTags = ulTag.querySelectorAll("li");
+//  allLiTags.forEach(li => li.style.display = 'block');
+// }
+
+// // Function to pause all songs
+// function pauseAllSongs() {
+//  const allAudioElements = document.querySelectorAll('audio');
+//  allAudioElements.forEach(audio => audio.pause());
+//  const playingTitle = document.querySelector('.playing');
+//  if (playingTitle) {
+//    playingTitle.classList.remove('playing');
+//  }
+// }
+
+// closeMoreMusic.addEventListener("click", () => {
+//   musicList.classList.remove("show");
+// });
+
+
+
+
+
+//    // Change the background color to white
+// document.body.style.backgroundColor = "white";
+// document.body.style.color = "black"; // Change text color to black for better visibility
+
+// let userName;
+
+// // Loop until a valid username is provided
+// while (!userName || userName.trim() === "") {
+//   userName = prompt("Please enter your name:");
+
+//   if (!userName || userName.trim() === "") {
+//     alert("No name provided. Please enter your name."); // Alert the user
+//   }
+// }
+
+// // Proceed with loading the music player
+// console.log(`Welcome, ${userName}!`);
+
+// // Here you would call your function to load the music player
+// window.addEventListener("load", () => {
+//   loadMusic(musicIndex);
+//   updatePlayingSong();
+// });
+
+
+
+
+// // Change the background color to white
+// document.body.style.backgroundColor = "white";
+// document.body.style.color = "black"; // Change text color to black for better visibility
+
+// let userName;
+
+// // Loop until a valid username is provided
+// while (!userName || userName.trim() === "") {
+//   userName = prompt("Please enter your name:");
+
+//   if (!userName || userName.trim() === "") {
+//     alert("No name provided. Please enter your name."); // Alert the user
+//   }
+// }
+
+// // Proceed with loading the music player
+// console.log(`Welcome, ${userName}!`);
+
+// // Here you would call your function to load the music player
+// window.addEventListener("load", () => {
+//   loadMusic(musicIndex);
+//   updatePlayingSong();
+
+//   // Send the username to the backend
+//   fetch('/api/logUser ', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify({ username: userName }),
+//   })
+//   .then(response => response.json())
+//   .then(data => {
+//     console.log('User  logged:', data);
+//   })
+//   .catch((error) => {
+//     console.error('Error logging user:', error);
+//   });
+// });

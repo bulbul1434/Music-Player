@@ -4,122 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/playlist.css">
     <title>Document</title>
 </head>
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Poppins", sans-serif;
-    }
-
-    :root {
-        --slate-blue: #585b91;
-        --deep-navy-blue: rgba(18, 18, 45);
-        --royal-blue-opacity: rgba(23, 31, 139, 0.37);
-    }
-
-    body {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        padding: 15px;
-    }
-
-    .card {
-        display: flex;
-        flex-wrap: wrap;
-        width: 300px;
-        border-radius: 15px;
-        padding: 4px 8px;
-        background: var(--slate-blue);
-        box-shadow: 0 8px 32px 0 var(--royal-blue-opacity);
-        backdrop-filter: blur(8.5px);
-        -webkit-backdrop-filter: blur(8.5px);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-    }
-
-    iframe {
-        border-radius: 12px;
-        background: var(--slate-blue);
-    }
-
-    /* Responsive Design */
-    @media only screen and (max-width: 1200px) {
-        .card {
-            width: 350px;
-        }
-    }
-
-    @media only screen and (max-width: 768px) {
-        body {
-            flex-direction: column;
-            padding: 10px;
-        }
-    }
-
-    @media only screen and (max-width: 480px) {
-        body {
-            padding: 5px;
-        }
-
-    }
-</style>
 
 <body>
     <div class="card">
         <iframe  src="https://open.spotify.com/embed/playlist/4zhOr2runshpF63hP3kjbN?utm_source=generator"
-            width="100%" height="452" frameBorder="0" allowfullscreen=""
+            width="100%" height="600" frameBorder="0" allowfullscreen=""
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy">
         </iframe>
     </div>
-
-
-    <!-- <script>
-            async function getPlaylist() {
-                const playlistId = document.getElementById('songInput').value;
-                const client_id = '2ab5e4df6ed44c90a3f8d181c1d6d341'; // Replace with your Client ID
-                const client_secret = '71b19df950254fe39c9e5a31b95f2de5'; // Replace with your Client Secret
-    
-                const response = await fetch('https://accounts.spotify.com/api/token', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Authorization': 'Basic ' + btoa(client_id + ':' + client_secret)
-                    },
-                    body: 'grant_type=client_credentials'
-                });
-    
-                const tokenData = await response.json();
-                const accessToken = tokenData.access_token;
-    
-                const playlistResponse = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
-    
-                const playlistData = await playlistResponse.json();
-                const playlistDiv = document.getElementById('playlist');
-                playlistDiv.innerHTML = '';
-    
-                playlistData.tracks.items.forEach(item => {
-                    const track = item.track;
-                    const trackElement = document.createElement('div');
-                    trackElement.classList.add('playlist-item');
-                    trackElement.innerHTML = `
-                    <h3>${track.name}</h3>
-                    <p>by ${track.artists.map(artist => artist.name).join(', ')}</p>
-                    <audio controls src="${track.preview_url}"></audio>
-                `;
-                    playlistDiv.appendChild(trackElement);
-                });
-            }
-        </script> -->
-</body>
-
+    </body>
 </html>

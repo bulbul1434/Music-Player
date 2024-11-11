@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles/login.css">
+  <title>Document</title>
+</head>
+<body>
+  
+<form id="myForm" action="https://api.web3forms.com/submit" method="POST" onsubmit="handleSubmit(event)">
+
+  <!-- Replace with your Access Key -->
+  <input type="hidden" name="access_key" value="793bc637-c2b7-4c41-af99-2e795705714c">
+  
+  <!-- Form Inputs. Each input must have a name="" attribute -->
+  <label for="name">NAME : </label>
+  <input type="text" name="name" id="name" required>
+  <!-- <br> -->
+  <label for="email">EMAIL : </label>
+  <input type="email" name="email" id="email" required>
+  <!-- <textarea name="message" required></textarea> -->
+<!-- <br> -->
+  <!-- Honeypot Spam Protection -->
+  <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+  <!-- Submit Button -->
+  <button type="submit">Submit Form</button>
+
+</form>
+
+<script src="js/login.js"></script>
+</body>
+</html>

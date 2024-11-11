@@ -32,22 +32,22 @@ let allMusic = [
     img: "music-4",
     src: "music-4",
   },
-  {
-    name: "Oo Mahi",
-    artist: "Arijit Singh",
-    img: "music-5",
-    src: "music-5",
-  },
+  // {
+  //   name: "Oo Mahi",
+  //   artist: "Arijit Singh",
+  //   img: "music-5",
+  //   src: "music-5",
+  // },
   {
     name: "Ami je Tomar",
     artist: "Shreya Shoghal, Arijit Singh",
     img: "music-6",
     src: "music-6",
   },
-  // {
-  //   name: "Humdard",
-  //   artist: "Arijit Singh",
-  //   img: "music-7",
-  //   src: "music-7",
-  // },
+  {
+    name: "Ghaghro",
+    artist: "shreya",
+    img: "music-7",
+    src: "music-7",
+  },
 ];
