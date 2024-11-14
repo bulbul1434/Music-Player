@@ -163,17 +163,6 @@ function shuffleMusic() {
   updatePlayingSong();
 }
 
-
-// Show/hide music list
-moreMusicBtn.addEventListener("click", () => {
-  musicList.classList.toggle("show");
-});
-
-closeMoreMusic.addEventListener("click", () => {
-  musicList.classList.remove("show");
-});
-
-
 // Generate song list dynamically
 allMusic.forEach((song, index) => {
   const liTag = `
@@ -224,12 +213,18 @@ allMusic.forEach((song, index) => {
     const currentAudioTag = currentLi.querySelector(".audio-duration");
     currentAudioTag.innerText = "Playing";
   }
+  // Show/hide music list 
+  moreMusicBtn.addEventListener("click", () => {
+    musicList.classList.toggle("show");
+  });
   
-  closeButton =  document.getElementById('close');
+  closeMoreMusic.addEventListener("click", () => {
+    musicList.classList.remove("show");
+  });
   
   // Function to show the music list
   function showMusicList() {
-  const allLiTags = ulTag.querySelectorAll("li");
+    const allLiTags = ulTag.querySelectorAll("li");
   allLiTags.forEach(li => li.style.display = 'block');
   }
   
@@ -238,35 +233,10 @@ allMusic.forEach((song, index) => {
    allLiTags.forEach(li => li.style.display = 'none'); 
   }
   
-  // Function to pause all songs
-  function pauseAllSongs() {
-  const allAudioElements = document.querySelectorAll('audio');
-  allAudioElements.forEach(audio => audio.pause());
-  const playingTitle = document.querySelector('.playing');
-  if (playingTitle) {
-    playingTitle.classList.remove('playing');
-  }
-  }
+
   
-  // Close button event to act as back button
-  closeButton.addEventListener('click', () => {
-  if (resultsDiv.style.display === 'block') {
-    // If search results are displayed, hide them and show music list
-    resultsDiv.style.display = 'none';
-    pauseAllSongs();
-    showMusicList();
-  }else {
-    musicList.classList.remove("show"); 
-  }
-  });
-
-
-
-
-
-
 let currentSong = null;
-let currentIndex = 0;
+let currentIndex = 0; 
 const resultsDiv = document.getElementById('results');
 
 
@@ -294,16 +264,19 @@ async function searchSong() {
   hideMusicList(); // Hide the existing music list
   data.tracks.items.forEach((track, index) => {
     const trackElement = document.createElement('div');
-    trackElement.innerHTML = `
-      <div class="song-item" data-index="${index}">
-        <p class="song-title" id="title-${track.id}"><strong>${track.name}</strong></p>
-        <span class="song-duration" id="duration-${track.id}"></span>
-      </div>
-      ${track.preview_url ? `<audio id="audio-${track.id}">
-          <source src="${track.preview_url}" type="audio/mpeg">
-          Your browser does not support the audio element.
-      </audio>` : '<p>No preview available</p>'}
-    `;
+trackElement.innerHTML = `
+  <div class="song-item" data-index="${index}">
+    <p class="song-title" id="title-${track.id}"><strong>${track.name}</strong> by ${track.artists.map(artist => artist.name).join(', ')}</p>
+    <span class="song-duration" id="duration-${track.id}"></span>
+  </div>
+  ${track.preview_url ? `<audio id="audio-${track.id}">
+      <source src="${track.preview_url}" type="audio/mpeg">
+      Your browser does not support the audio element.
+  </audio>` : '<p>No preview available</p>'}
+<article class="song-controls"></article>
+`;
+
+    
     resultsDiv.appendChild(trackElement);
 
     const audioElement = trackElement.querySelector('audio');
@@ -375,110 +348,10 @@ style.innerHTML = `
     display: flex;
     justify-content: space-between;
     align-items: center;
+    
   }
   .playing {
     color: var(--electric-blue);
   }
 `;
 document.head.appendChild(style);
-
-
-
-
-// // Back button event to return to music list and pause any playing song
-// backButton.addEventListener('click', () => {
-//   resultsDiv.style.display = 'none'; 
-//   pauseAllSongs(); // Pause any currently playing song
-//   showMusicList(); 
-// });
-
-// // Function to show the music list
-// function showMusicList() {
-//  const allLiTags = ulTag.querySelectorAll("li");
-//  allLiTags.forEach(li => li.style.display = 'block');
-// }
-
-// // Function to pause all songs
-// function pauseAllSongs() {
-//  const allAudioElements = document.querySelectorAll('audio');
-//  allAudioElements.forEach(audio => audio.pause());
-//  const playingTitle = document.querySelector('.playing');
-//  if (playingTitle) {
-//    playingTitle.classList.remove('playing');
-//  }
-// }
-
-// closeMoreMusic.addEventListener("click", () => {
-//   musicList.classList.remove("show");
-// });
-
-
-
-
-
-//    // Change the background color to white
-// document.body.style.backgroundColor = "white";
-// document.body.style.color = "black"; // Change text color to black for better visibility
-
-// let userName;
-
-// // Loop until a valid username is provided
-// while (!userName || userName.trim() === "") {
-//   userName = prompt("Please enter your name:");
-
-//   if (!userName || userName.trim() === "") {
-//     alert("No name provided. Please enter your name."); // Alert the user
-//   }
-// }
-
-// // Proceed with loading the music player
-// console.log(`Welcome, ${userName}!`);
-
-// // Here you would call your function to load the music player
-// window.addEventListener("load", () => {
-//   loadMusic(musicIndex);
-//   updatePlayingSong();
-// });
-
-
-
-
-// // Change the background color to white
-// document.body.style.backgroundColor = "white";
-// document.body.style.color = "black"; // Change text color to black for better visibility
-
-// let userName;
-
-// // Loop until a valid username is provided
-// while (!userName || userName.trim() === "") {
-//   userName = prompt("Please enter your name:");
-
-//   if (!userName || userName.trim() === "") {
-//     alert("No name provided. Please enter your name."); // Alert the user
-//   }
-// }
-
-// // Proceed with loading the music player
-// console.log(`Welcome, ${userName}!`);
-
-// // Here you would call your function to load the music player
-// window.addEventListener("load", () => {
-//   loadMusic(musicIndex);
-//   updatePlayingSong();
-
-//   // Send the username to the backend
-//   fetch('/api/logUser ', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify({ username: userName }),
-//   })
-//   .then(response => response.json())
-//   .then(data => {
-//     console.log('User  logged:', data);
-//   })
-//   .catch((error) => {
-//     console.error('Error logging user:', error);
-//   });
-// });
