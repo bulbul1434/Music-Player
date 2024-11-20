@@ -8,15 +8,19 @@
   <link rel="stylesheet" href="styles/style.css">
   <link rel="shortcut icon" href="images/musicLogo.png" type="image/x-icon">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700;900&display=swap"
+    rel="stylesheet" />
 </head>
-
-
 <body>
-  
+
   <div class="wrapper">
     <div class="top-bar">
-      <span><img src="images/musicLogo.png" alt="Logo " style="width: 20px; margin-left: 15px;"></span>
-      <a href="playList.html" class="playlist-link"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-160q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm0-240q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm0-240q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Z"/></svg></a>
+      <span><img src="images/musicLogo.png" alt="Logo" style="width: 20px; margin-left: 15px;"></span>
+      <a href="playList.html" class="playlist-link"  rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
+          viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+          <path
+            d="M480-160q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm0-240q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm0-240q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Z" />
+        </svg></a>
     </div>
     <div class="img-area">
       <img src="" alt="">
@@ -44,48 +48,50 @@
       <i id="more-music" class="material-icons">queue_music</i>
     </div>
     <div class="music-list">
+      <div class="wrap-input-17">
         <div class="search-container">
-            <input type="text" id="songInput" placeholder="Enter song name">
-            <button id="search-btn" onclick="searchSong()">
-                <i class="material-icons search-icon">search</i>
-            </button>
+          <input type="text" id="songInput" placeholder="Enter song name">
+          <button id="search-btn">
+            <i class="material-icons search-icon" onclick="searchSong()">search</i>
+          </button>
         </div>
-      <hr>
-      <div class="header">
-        <div class="row">
-          <i class="list material-icons">queue_music</i>
-          <span>Music list</span>
+
+        <hr>
+        <div class="header">
+          <div class="row">
+            <i class="list material-icons">queue_music</i>
+            <span>Music list</span>
+          </div>
+          <i id="close" class="material-icons">arrow_back_ios</i>
         </div>
-        <i id="close" class="material-icons">arrow_back_ios</i>
+        <ul>
+          <div id="results"></div>
+          <!-- here li list are coming from js -->
+        </ul>
       </div>
-      <ul>
-        <div id="results"></div>
-        <!-- here li list are coming from js -->
-      </ul>
     </div>
-  </div>
 
-  <script src="js/music-list.js"></script>
-  <script src="js/script.js"></script>
-  <script>
-   
-        // Function to handle input expansion
-        function expandInput() {
-            const songInput = document.getElementById('songInput');
-            songInput.classList.add('active'); // Add the active class to expand
-            songInput.focus(); // Focus on the input when expanded
+    <script src="js/music-list.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+
+      // Function to handle input expansion
+      function expandInput() {
+        const songInput = document.getElementById('songInput');
+        songInput.classList.add('active'); // Add the active class to expand
+        songInput.focus(); // Focus on the input when expanded
+      }
+      // Add event listeners
+      document.getElementById('search-btn').addEventListener('click', function () {
+        expandInput(); // Expand the input field on button click
+      });
+
+      document.getElementById('songInput').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          searchSong(); // Call searchSong when Enter is pressed
         }
-        // Add event listeners
-        document.getElementById('search-btn').addEventListener('click', function() {
-            expandInput(); // Expand the input field on button click
-        });
-
-        document.getElementById('songInput').addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                searchSong(); // Call searchSong when Enter is pressed
-            }
-        });
-  </script>
+      });
+    </script>
 </body>
 
 </html>

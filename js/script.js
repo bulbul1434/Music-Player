@@ -13,15 +13,18 @@ const wrapper = document.querySelector(".wrapper"),
   closeMoreMusic = musicList.querySelector("#close"),
   repeatBtn = wrapper.querySelector("#repeat-plist"),
   ulTag = wrapper.querySelector("ul");
-  
-  let musicIndex = Math.floor(Math.random() * allMusic.length);
-  let isMusicPaused = true;
-  
-  window.addEventListener("load", () => {
-    loadMusic(musicIndex);
-    updatePlayingSong();
-  });
-  
+
+let musicIndex = Math.floor(Math.random() * allMusic.length);
+let isMusicPaused = true;
+let currentSong = null;
+let currentIndex = 0;
+let countdownInterval;
+
+window.addEventListener("load", () => {
+  loadMusic(musicIndex);
+  updatePlayingSong();
+});
+
 // Load music details
 function loadMusic(index) {
   const song = allMusic[index];
@@ -105,20 +108,20 @@ mainAudio.addEventListener("loadeddata", () => {
   const totalSec = Math.floor(mainAudio.duration % 60)
     .toString()
     .padStart(2, "0");
-    wrapper.querySelector(".max-duration").innerText = `${totalMin}:${totalSec}`;
-  });
-  
-  // Seek through the progress bar
-  progressArea.addEventListener("click", (e) => {
-    const progressWidth = progressArea.clientWidth;
-    const clickedOffsetX = e.offsetX;
-    mainAudio.currentTime = (clickedOffsetX / progressWidth) * mainAudio.duration;
-    playMusic();
-    updatePlayingSong();
-  });
-  
-  // Repeat/shuffle button event
-  repeatBtn.addEventListener("click", () => {
+  wrapper.querySelector(".max-duration").innerText = `${totalMin}:${totalSec}`;
+});
+
+// Seek through the progress bar
+progressArea.addEventListener("click", (e) => {
+  const progressWidth = progressArea.clientWidth;
+  const clickedOffsetX = e.offsetX;
+  mainAudio.currentTime = (clickedOffsetX / progressWidth) * mainAudio.duration;
+  playMusic();
+  updatePlayingSong();
+});
+
+// Repeat/shuffle button event
+repeatBtn.addEventListener("click", () => {
   switch (repeatBtn.innerText) {
     case "repeat":
       repeatBtn.innerText = "repeat_one";
@@ -183,62 +186,69 @@ allMusic.forEach((song, index) => {
     const totalSec = Math.floor(duration % 60)
       .toString()
       .padStart(2, "0");
-      const durationTag = ulTag.querySelector(`#${song.src}`);
-      durationTag.innerText = `${totalMin}:${totalSec}`;
-      durationTag.setAttribute("t-duration", `${totalMin}:${totalSec}`);
-    });
-    
-    // Add click event listener to each list item
-    const liItem = ulTag.querySelector(`li[li-index="${index + 1}"]`);
-    liItem.addEventListener("click", () => selectSong(liItem));
+    const durationTag = ulTag.querySelector(`#${song.src}`);
+    durationTag.innerText = `${totalMin}:${totalSec}`;
+    durationTag.setAttribute("t-duration", `${totalMin}:${totalSec}`);
   });
-  
-  // Update the song that is currently playing in the list
-  function updatePlayingSong() {
-    const allLiTags = ulTag.querySelectorAll("li");
-    
-    // Remove 'playing' class from all list items
-    allLiTags.forEach((li) => {
-      li.classList.remove("playing");
-      const audioTag = li.querySelector(".audio-duration");
-      const songDuration = audioTag.getAttribute("t-duration");
-      audioTag.innerText = songDuration; // Reset to original duration
-    });
-    
-    // Add 'playing' class to the current song
-    const currentLi = ulTag.querySelector(`li[li-index="${musicIndex + 1}"]`);
-    currentLi.classList.add("playing");
-    
-    // Update the duration text to "Playing"
-    const currentAudioTag = currentLi.querySelector(".audio-duration");
-    currentAudioTag.innerText = "Playing";
-  }
-  // Show/hide music list 
-  moreMusicBtn.addEventListener("click", () => {
-    musicList.classList.toggle("show");
+
+  // Add click event listener to each list item
+  const liItem = ulTag.querySelector(`li[li-index="${index + 1}"]`);
+  liItem.addEventListener("click", () => selectSong(liItem));
+});
+
+// Update the song that is currently playing in the list
+function updatePlayingSong() {
+  const allLiTags = ulTag.querySelectorAll("li");
+
+  // Remove 'playing' class from all list items
+  allLiTags.forEach((li) => {
+    li.classList.remove("playing");
+    const audioTag = li.querySelector(".audio-duration");
+    const songDuration = audioTag.getAttribute("t-duration");
+    audioTag.innerText = songDuration; // Reset to original duration
   });
-  
-  closeMoreMusic.addEventListener("click", () => {
-    musicList.classList.remove("show");
-  });
-  
-  // Function to show the music list
-  function showMusicList() {
-    const allLiTags = ulTag.querySelectorAll("li");
+
+  // Add 'playing' class to the current song
+  const currentLi = ulTag.querySelector(`li[li-index="${musicIndex + 1}"]`);
+  currentLi.classList.add("playing");
+
+  // Update the duration text to "Playing"
+  const currentAudioTag = currentLi.querySelector(".audio-duration");
+  currentAudioTag.innerText = "Playing";
+}
+
+// Show/hide music list 
+moreMusicBtn.addEventListener("click", () => {
+  musicList.classList.toggle("show");
+});
+
+closeMoreMusic.addEventListener("click", () => {
+  musicList.classList.remove("show");
+  pauseCurrentlyPlayingAudio(); // Pause any currently playing audio
+  location.reload();
+});
+
+// Function to show the music list
+function showMusicList() {
+  const allLiTags = ulTag.querySelectorAll("li");
   allLiTags.forEach(li => li.style.display = 'block');
-  }
-  
-  function hideMusicList() {
-   const allLiTags = ulTag.querySelectorAll("li"); 
-   allLiTags.forEach(li => li.style.display = 'none'); 
-  }
-  
+}
 
-  
-let currentSong = null;
-let currentIndex = 0; 
+function hideMusicList() {
+  const allLiTags = ulTag.querySelectorAll("li"); 
+  allLiTags.forEach(li => li.style.display = 'none'); 
+}
+
+// Function to pause any currently playing audio
+function pauseCurrentlyPlayingAudio() {
+  if (currentSong) {
+    currentSong.pause(); // Pause the currently playing song
+    currentSong = null; // Reset currentSong to null
+    clearInterval(countdownInterval); // Clear the countdown interval
+  }
+}
+
 const resultsDiv = document.getElementById('results');
-
 
 async function searchSong() {
   const songName = document.getElementById('songInput').value;
@@ -262,20 +272,35 @@ async function searchSong() {
   const data = await searchResponse.json();
   resultsDiv.innerHTML = '';
   hideMusicList(); // Hide the existing music list
+  pauseCurrentlyPlayingAudio(); // Pause any currently playing audio before searching for new songs
+
   data.tracks.items.forEach((track, index) => {
     const trackElement = document.createElement('div');
-trackElement.innerHTML = `
-  <div class="song-item" data-index="${index}">
-    <p class="song-title" id="title-${track.id}"><strong>${track.name}</strong> by ${track.artists.map(artist => artist.name).join(', ')}</p>
-    <span class="song-duration" id="duration-${track.id}"></span>
-  </div>
-  ${track.preview_url ? `<audio id="audio-${track.id}">
-      <source src="${track.preview_url}" type="audio/mpeg">
-      Your browser does not support the audio element.
-  </audio>` : '<p>No preview available</p>'}
-<article class="song-controls"></article>
-`;
+    trackElement.innerHTML = `
+      <div class="song-item" data-index="${index}">
+        <p class="song-title" id="title-${track.id}"><strong>${track.name}</strong> by ${track.artists.map(artist => artist.name).join(', ')}</p>
+        <span class="song-duration" id="duration-${track.id}"></span>
+      </div>
+      ${track.preview_url ? `<audio id="audio-${track.id}">
+          <source src="${track.preview_url}" type="audio/mpeg">
+          Your browser does not support the audio element.
+      </audio>` : '<p>No preview available</p>'}
+      <article class="song-controls"></article>
+    `;
 
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .song-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding:0.5em;
+      }
+      .playing {
+        color: var(--electric-blue);
+      }
+    `;
+    document.head.appendChild(style);
     
     resultsDiv.appendChild(trackElement);
 
@@ -316,8 +341,6 @@ trackElement.innerHTML = `
   });
 }
 
-let countdownInterval;
-
 function startCountdown(duration, displayElement) {
   let remainingTime = duration;
 
@@ -341,17 +364,3 @@ function updateCountdown(currentTime, duration, displayElement) {
   const seconds = Math.floor(remainingTime % 60);
   displayElement.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
-
-const style = document.createElement('style');
-style.innerHTML = `
-  .song-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    
-  }
-  .playing {
-    color: var(--electric-blue);
-  }
-`;
-document.head.appendChild(style);

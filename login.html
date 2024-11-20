@@ -6,9 +6,10 @@
   <link rel="stylesheet" href="styles/login.css">
   <title>Document</title>
 </head>
-<body>
-  
-<form id="myForm" action="https://api.web3forms.com/submit" method="POST" onsubmit="handleSubmit(event)">
+<body> 
+  <!-- <button popovertarget="my-popover">login</button> -->
+  <!-- <div id="my-popover" popover> -->
+<form id="myForm" action="https://api.web3forms.com/submit" method="POST" onsubmit="handleSubmit(event)" >
 
   <!-- Replace with your Access Key -->
   <input type="hidden" name="access_key" value="793bc637-c2b7-4c41-af99-2e795705714c">
@@ -20,8 +21,6 @@
   <!-- <br> -->
   <label for="email">EMAIL : </label>
   <input type="email" name="email" id="email" required>
-  <!-- <textarea name="message" required></textarea> -->
-<!-- <br> -->
   <!-- Honeypot Spam Protection -->
   <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
 
@@ -29,6 +28,8 @@
   <button type="submit">Submit Form</button>
 
 </form>
+
+<!-- </div> -->
 
 <script src="js/login.js"></script>
 </body>
